@@ -1,13 +1,10 @@
 const { Game, Favorite, User } = require("../models");
 const { Op } = require("sequelize");
 
-/**
- * GameController - Mengelola semua operasi terkait game
- */
 class GameController {
   /**
    * @route GET /games
-   * @desc Ambil semua game dari DB lokal
+   * @desc Fetch all games from the local database.
    * @access Public
    */
   static async getAllGames(req, res, next) {
@@ -18,7 +15,7 @@ class GameController {
 
       return res.status(200).json({
         success: true,
-        message: "Games berhasil diambil",
+        message: "Games successfully retrieved.",
         data: games,
       });
     } catch (err) {
@@ -28,33 +25,25 @@ class GameController {
 
   /**
    * @route GET /games/:id
-   * @desc Ambil detail game berdasarkan database ID
+   * @desc Fetch game details by database ID.
    * @access Public
    */
   static async getGameById(req, res, next) {
     try {
       const { id } = req.params;
 
-      // Cari berdasarkan DB id saja
-      const game = await Game.findByPk(id, {
-        include: [
-          {
-            model: User,
-            through: { attributes: [] },
-            attributes: { exclude: ["password"] },
-          },
-        ],
-      });
+      // Search by database ID only.
+      const game = await Game.findByPk(id);
 
       if (!game) {
-        const error = new Error("Game tidak ditemukan");
+        const error = new Error("Game not found.");
         error.status = 404;
         throw error;
       }
 
       return res.status(200).json({
         success: true,
-        message: "Detail game berhasil diambil",
+        message: "Game details successfully retrieved.",
         data: game,
       });
     } catch (err) {
@@ -97,7 +86,7 @@ class GameController {
 
       return res.status(200).json({
         success: true,
-        message: "Hasil pencarian game",
+        message: "Game search results.",
         data: games,
         total: games.length,
       });

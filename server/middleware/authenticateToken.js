@@ -1,16 +1,12 @@
 const { verifyToken } = require("../helpers/jwt");
 
-/**
- * Middleware untuk verifikasi JWT token
- * Token harus dikirim di header: Authorization: Bearer <token>
- */
 const authenticateToken = (req, res, next) => {
   try {
     const authHeader = req.headers["authorization"];
     const token = authHeader && authHeader.split(" ")[1]; // Get token from "Bearer <token>"
 
     if (!token) {
-      const error = new Error("Token diperlukan");
+      const error = new Error("Token is required.");
       error.status = 401;
       throw error;
     }
@@ -20,7 +16,7 @@ const authenticateToken = (req, res, next) => {
     next();
   } catch (err) {
     if (err.name === "JsonWebTokenError" || err.name === "TokenExpiredError") {
-      err.message = "Token tidak valid atau sudah kadaluarsa";
+      err.message = "Token is invalid or has expired.";
       err.status = 403;
     }
     next(err);

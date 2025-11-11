@@ -4,7 +4,7 @@ const FavoriteController = require("../controllers/favoriteController");
 const authenticateToken = require("../middleware/authenticateToken");
 const { asyncHandler } = require("../middleware/errorHandler");
 
-// Semua routes di favorite memerlukan authentication
+// All routes in favorites require authentication.
 router.use(authenticateToken);
 
 // GET user favorites

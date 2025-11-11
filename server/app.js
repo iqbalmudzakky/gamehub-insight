@@ -9,7 +9,6 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(router);
 
-// Centralize Error Handler Middleware (harus di paling akhir)
 app.use(errorHandler);
 
 module.exports = app;
