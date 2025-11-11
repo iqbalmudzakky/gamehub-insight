@@ -4,11 +4,11 @@ const AiController = require("../controllers/aiController");
 const authenticateToken = require("../middleware/authenticateToken");
 const { asyncHandler } = require("../middleware/errorHandler");
 
-// Semua routes di ai memerlukan authentication
+// All routes in AI require authentication.
 router.use(authenticateToken);
 
-// POST get game recommendation from AI
-router.post("/recommend", asyncHandler(AiController.recommendGame));
+// GET personalized game recommendations based on user favorites
+router.get("/recommend", asyncHandler(AiController.recommendGame));
 
 // GET AI history
 router.get("/history", asyncHandler(AiController.getAiHistory));

@@ -486,11 +486,13 @@ DELETE /favorites/1
 
 **All AI endpoints require authentication.**
 
+**Note:** The AI recommendation feature uses **Google Gemini API** (free tier) and automatically generates personalized game suggestions based on the user's favorite games.
+
 ### 1. Get AI Game Recommendation
 
-**Purpose:** Get personalized game recommendations from OpenAI based on user's preferences or questions.
+**Purpose:** Get personalized game recommendations from Gemini AI based on user's favorite games. The recommendation is auto-generated using the user's preferences from their favorites list.
 
-- **Method:** `POST`
+- **Method:** `GET`
 - **Endpoint:** `/ai/recommend`
 - **Authentication:** Required
 
@@ -498,43 +500,52 @@ DELETE /favorites/1
 
 ```
 Authorization: Bearer <token>
-Content-Type: application/json
 ```
 
-**Request Body:**
+**How it works:**
 
-```json
-{
-  "prompt": "I like action games with great storylines. What do you recommend?"
-}
-```
+- If user has favorites: Gemini analyzes favorite games and suggests similar games
+- If user has no favorites: Gemini provides general trending free-to-play game recommendations
 
 **Response (200):**
 
 ```json
 {
   "success": true,
-  "message": "Game recommendation retrieved successfully",
+  "message": "Game recommendations retrieved successfully",
   "data": {
     "id": 1,
-    "prompt": "I like action games with great storylines. What do you recommend?",
-    "response": "Based on your preferences, I recommend trying The Witcher 3: Wild Hunt...",
-    "createdAt": "2025-11-11T10:30:00Z"
+    "recommendations": [
+      {
+        "id": 43,
+        "title": "Blue Protocol: Star Resonance",
+        "genre": "MMORPG",
+        "platform": "PC (Windows)",
+        "publisher": "A Plus",
+        "thumbnail": "https://www.freetogame.com/g/622/thumbnail.jpg"
+      },
+      ...
+    ],
+    "gameIds": [98, 109, 43, 179, 69],
+    "basedOnFavorites": 2,
+    "createdAt": "2025-11-11T13:26:42.679Z"
   }
 }
 ```
 
 **Notes:**
 
-- Uses OpenAI GPT-3.5-turbo model
-- All requests are saved to database
-- Max response tokens: 500
+- Uses Google Gemini Pro model (free tier)
+- Analyzes up to 10 most recent favorite games
+- Recommendations are automatically saved to database
+- No prompt required - fully automated based on user preferences
+- Response includes engaging descriptions and reasoning
 
 ---
 
 ### 2. Get AI Request History
 
-**Purpose:** View all previous AI recommendation requests made by the current user.
+**Purpose:** View the most recent AI recommendation request made by the current user. If no history exists, the system automatically generates a new recommendation.
 
 - **Method:** `GET`
 - **Endpoint:** `/ai/history`
@@ -557,30 +568,63 @@ Authorization: Bearer <token>
 GET /ai/history?page=0&limit=50
 ```
 
-**Response (200):**
+**Response (200) - Cached History:**
 
 ```json
 {
   "success": true,
-  "message": "AI request history retrieved successfully",
-  "data": [
-    {
-      "id": 1,
-      "UserId": 1,
-      "prompt": "I like action games with great storylines...",
-      "response": "Based on your preferences, I recommend...",
-      "createdAt": "2025-11-11T10:30:00Z",
-      "updatedAt": "2025-11-11T10:30:00Z"
-    }
-  ],
-  "pagination": {
-    "total": 5,
-    "page": 0,
-    "limit": 50,
-    "totalPages": 1
+  "source": "cache",
+  "message": "Loaded from previous AI request",
+  "data": {
+    "id": 1,
+    "recommendations": [
+      {
+        "id": 5,
+        "title": "Dota 2",
+        "genre": "MOBA",
+        "platform": "PC (Windows)",
+        "publisher": "Valve",
+        "thumbnail": "https://example.com/dota2.jpg"
+      }
+    ],
+    "gameIds": [5, 12, 18],
+    "createdAt": "2025-11-11T10:30:00Z"
   }
 }
 ```
+
+**Response (201) - Auto-Generated:**
+
+```json
+{
+  "success": true,
+  "source": "generated",
+  "message": "No history found. New AI recommendation generated successfully",
+  "data": {
+    "id": 1,
+    "recommendations": [
+      {
+        "id": 5,
+        "title": "Dota 2",
+        "genre": "MOBA",
+        "platform": "PC (Windows)",
+        "publisher": "Valve",
+        "thumbnail": "https://example.com/dota2.jpg"
+      }
+    ],
+    "gameIds": [5, 12, 18],
+    "basedOnFavorites": 3,
+    "createdAt": "2025-11-11T10:30:00Z"
+  }
+}
+```
+
+**Notes:**
+
+- Returns cached recommendation if history exists (HTTP 200)
+- Automatically generates new recommendation if no history found (HTTP 201)
+- Uses Gemini AI to analyze user's favorite games
+- Saves generated recommendation to database for future requests
 
 ---
 
@@ -733,10 +777,8 @@ curl -X POST http://localhost:3000/favorites/1 \
 ### Get AI Recommendation
 
 ```bash
-curl -X POST http://localhost:3000/ai/recommend \
-  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
-  -H "Content-Type: application/json" \
-  -d '{"prompt":"I like action games with great storylines"}'
+curl -X GET http://localhost:3000/ai/recommend \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
 ```
 
 ---
