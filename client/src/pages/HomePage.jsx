@@ -1,91 +1,91 @@
+import { useEffect, useState } from "react";
+import CardList from "../components/CardList";
+import AiRecommendation from "../components/AiRecommendation";
+import { serverApi } from "../helpers/client-api";
+
 export default function HomePage() {
+  const [allGames, setAllGames] = useState([]);
+  const [genreList, setGenreList] = useState([]);
+  const [q, setQ] = useState("");
+  const [genre, setGenre] = useState("");
+
+  async function fetchGenres() {
+    try {
+      const response = await serverApi.get(`/games`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+
+      // Extract unique genres from all games
+      const uniqueGenres = [
+        ...new Set(response.data.data.map((game) => game.genre)),
+      ];
+      setGenreList(uniqueGenres);
+    } catch (err) {
+      console.error("🚀 ~ fetchGenres ~ err:", err);
+    }
+  }
+
+  async function fetchAllGame() {
+    try {
+      const response = await serverApi.get(`/games?q=${q}&genre=${genre}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+      setAllGames(response.data.data);
+    } catch (err) {
+      console.error("🚀 ~ fetchAllGame ~ err:", err);
+    }
+  }
+
+  // Fetch genres only once on mount
+  useEffect(() => {
+    fetchGenres();
+  }, []);
+
+  // Fetch games when search or genre changes
+  useEffect(() => {
+    fetchAllGame();
+  }, [q, genre]);
+
   return (
     <>
-      {/* Navbar */}
-      <header className="navbar">
-        <div className="navbar-left">
-          <img src="logo.png" className="logo" alt="Logo" />
-          <h1 className="title">GameHub Insight</h1>
-        </div>
-        <div className="navbar-right">
-          <button className="login-btn">Login</button>
-        </div>
-      </header>
       {/* AI Recommendation Section */}
-      <section className="ai-section">
-        <h2 className="section-title">🎮 AI Game Recommendations</h2>
-        <div className="ai-cards">
-          <div className="ai-card">
-            <img src="ai1.jpg" alt="" />
-            <p>Elden Ring</p>
-          </div>
-          <div className="ai-card">
-            <img src="ai2.jpg" alt="" />
-            <p>Cyberpunk 2077</p>
-          </div>
-          <div className="ai-card">
-            <img src="ai3.jpg" alt="" />
-            <p>The Witcher 3</p>
-          </div>
-        </div>
-      </section>
+      <AiRecommendation />
+
       {/* 🔍 Search & Filter Section */}
       <section className="search-section">
         <input
           type="text"
           id="searchInput"
           placeholder="Search game title..."
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
         />
-        <select id="genreSelect">
+        <select
+          id="genreSelect"
+          value={genre}
+          onChange={(e) => setGenre(e.target.value)}
+        >
           <option value="">All Genres</option>
-          <option value="RPG">RPG</option>
-          <option value="FPS">FPS</option>
-          <option value="Action">Action</option>
-          <option value="MOBA">MOBA</option>
-          <option value="Battle Royale">Battle Royale</option>
+          {genreList.map((genreItem, index) => (
+            <option key={index} value={genreItem}>
+              {genreItem}
+            </option>
+          ))}
         </select>
         <button className="search-btn">Search</button>
       </section>
+
       {/* Game List Section */}
       <main className="game-section">
         <h2 className="section-title">🔥 Popular Games</h2>
         <div className="game-grid">
-          <div
-            className="game-card"
-            data-title="Fortnite"
-            data-genre="Battle Royale"
-          >
-            <img src="game1.jpg" />
-            <h3>Fortnite</h3>
-            <p>Battle Royale</p>
-            <button className="fav-btn">Add to Favorite</button>
-          </div>
-          <div className="game-card" data-title="Valorant" data-genre="FPS">
-            <img src="game2.jpg" />
-            <h3>Valorant</h3>
-            <p>FPS</p>
-            <button className="fav-btn">Add to Favorite</button>
-          </div>
-          <div
-            className="game-card"
-            data-title="Genshin Impact"
-            data-genre="RPG"
-          >
-            <img src="game3.jpg" />
-            <h3>Genshin Impact</h3>
-            <p>RPG</p>
-            <button className="fav-btn">Add to Favorite</button>
-          </div>
-          <div
-            className="game-card"
-            data-title="League of Legends"
-            data-genre="MOBA"
-          >
-            <img src="game4.jpg" />
-            <h3>League of Legends</h3>
-            <p>MOBA</p>
-            <button className="fav-btn">Add to Favorite</button>
-          </div>
+          {allGames.length > 0 ? (
+            allGames.map((game) => <CardList key={game.id} game={game} />)
+          ) : (
+            <p className="empty-text">
+              No games found. Try a different search.
+            </p>
+          )}
         </div>
       </main>
 

@@ -1,86 +1,127 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import AuthLayout from "../layouts/AuthLayout";
+import { Link, Navigate, useNavigate } from "react-router";
+import { serverApi } from "../helpers/client-api";
 
 /**
  * LoginPage Component
  * User authentication page with email/password login
  */
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+    // Clear error when user types
+    if (error) setError("");
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
     setIsLoading(true);
 
     try {
-      // TODO: Implement API call to backend
-      // const response = await fetch('http://localhost:3000/auth/login', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ email, password })
-      // });
-      // const data = await response.json();
+      const response = await serverApi.post("/auth/login", {
+        email: formData.email,
+        password: formData.password,
+      });
 
-      // if (data.success) {
-      //   localStorage.setItem('token', data.data.token);
-      //   navigate('/');
-      // } else {
-      //   setError(data.message);
-      // }
+      // Store token in localStorage
+      localStorage.setItem("token", response.data.data.token);
 
-      console.log("Login attempt:", { email, password });
+      // Success - redirect to home
+      await Swal.fire({
+        icon: "success",
+        title: "Welcome!",
+        text: "Login successful!",
+        confirmButtonText: "Continue",
+        confirmButtonColor: "#3085d6",
+        timer: 1500,
+      });
 
-      // Temporary: Simulate successful login
-      setTimeout(() => {
-        setIsLoading(false);
-        // navigate('/');
-      }, 1000);
+      navigate("/");
     } catch (err) {
-      setError("Login failed. Please try again.");
+      console.log("🚀 ~ handleSubmit ~ err:", err);
+      // Error alert - Let Axios handle validation
+      Swal.fire({
+        icon: "error",
+        title: "Login Failed",
+        text: err.response?.data?.message || "Invalid email or password.",
+        confirmButtonText: "Try Again",
+      });
+    } finally {
       setIsLoading(false);
     }
   };
 
+  if (localStorage.getItem("token")) {
+    return <Navigate to="/" />;
+  }
+
   return (
-    <AuthLayout>
+    <div className="auth-container">
       <div className="auth-box">
-        <h2>Login</h2>
+        <h2>Welcome Back</h2>
+        <p className="auth-subtitle">Login to continue your journey</p>
 
-        {error && <div className="error-message">{error}</div>}
+        {error && (
+          <div className="error-message" role="alert">
+            {error}
+          </div>
+        )}
 
-        <form onSubmit={handleSubmit}>
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            disabled={isLoading}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            disabled={isLoading}
-          />
-          <button type="submit" disabled={isLoading}>
+        <form onSubmit={handleSubmit} className="auth-form">
+          <div className="form-group">
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              disabled={isLoading}
+              className="form-input"
+              autoComplete="email"
+            />
+          </div>
+
+          <div className="form-group">
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              disabled={isLoading}
+              className="form-input"
+              autoComplete="current-password"
+            />
+          </div>
+
+          <button type="submit" disabled={isLoading} className="btn-primary">
             {isLoading ? "Logging in..." : "Login"}
           </button>
         </form>
 
-        <p>
-          Don't have an account? <Link to="/register">Register here</Link>
+        <p className="auth-footer">
+          Don't have an account?{" "}
+          <Link to="/register" className="auth-link">
+            Register here
+          </Link>
         </p>
       </div>
-    </AuthLayout>
+    </div>
   );
 }

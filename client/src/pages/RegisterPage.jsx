@@ -70,6 +70,7 @@ export default function RegisterPage() {
 
     setIsLoading(true);
 
+    console.log("🚀 ~ handleSubmit ~ formData:", formData);
     try {
       await serverApi.post("/auth/register", {
         name: formData.username,
@@ -95,13 +96,23 @@ export default function RegisterPage() {
     } catch (err) {
       console.log("🚀 ~ handleSubmit ~ err:", err);
       // Error alert
-      Swal.fire({
-        icon: "error",
-        title: "Registration Failed",
-        text:
-          err.response.data.message || "Registration failed. Please try again.",
-        confirmButtonText: "Try Again",
-      });
+      if (err.message === "Network Error") {
+        Swal.fire({
+          icon: "error",
+          title: "Network Error",
+          text: "Please check your internet connection.",
+          confirmButtonText: "Try Again",
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Registration Failed",
+          text:
+            err.response.data.message ||
+            "Registration failed. Please try again.",
+          confirmButtonText: "Try Again",
+        });
+      }
     } finally {
       setIsLoading(false);
     }
