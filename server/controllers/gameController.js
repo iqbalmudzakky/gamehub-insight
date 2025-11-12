@@ -57,50 +57,6 @@ class GameController {
       next(err);
     }
   }
-
-  // /**
-  //  * @route GET /games/search
-  //  * @desc Cari game berdasarkan genre, platform, atau keyword
-  //  * @access Public
-  //  */
-  // static async searchGames(req, res, next) {
-  //   try {
-  //     const { genre, platform, keyword } = req.query;
-  //     const where = {};
-
-  //     if (genre) {
-  //       where.genre = {
-  //         [Op.iLike]: `%${genre}%`,
-  //       };
-  //     }
-
-  //     if (platform) {
-  //       where.platform = {
-  //         [Op.iLike]: `%${platform}%`,
-  //       };
-  //     }
-
-  //     if (keyword) {
-  //       where.title = {
-  //         [Op.iLike]: `%${keyword}%`,
-  //       };
-  //     }
-
-  //     const games = await Game.findAll({
-  //       where: Object.keys(where).length > 0 ? where : {},
-  //       order: [["id", "ASC"]],
-  //     });
-
-  //     return res.status(200).json({
-  //       success: true,
-  //       message: "Game search results.",
-  //       data: games,
-  //       total: games.length,
-  //     });
-  //   } catch (err) {
-  //     next(err);
-  //   }
-  // }
 }
 
 module.exports = GameController;

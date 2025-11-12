@@ -7,6 +7,8 @@ const favoriteRoutes = require("./favorite");
 const aiRoutes = require("./ai");
 
 router.use("/auth", authRoutes);
+
+// Game routes need authentication
 router.use("/games", gameRoutes);
 
 // AI routes need authentication
