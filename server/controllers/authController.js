@@ -7,57 +7,6 @@ const { generateToken } = require("../helpers/jwt");
  */
 class AuthController {
   /**
-   * @route POST /auth/google
-   * @desc Login/Register user via Google OAuth
-   * @access Public
-   */
-  static async googleLogin(req, res, next) {
-    try {
-      const { GoogleId, name, email } = req.body;
-
-      if (!GoogleId || !email) {
-        const error = new Error("GoogleId dan email diperlukan");
-        error.status = 400;
-        throw error;
-      }
-
-      // Cek apakah user sudah terdaftar
-      let user = await User.findOne({ where: { GoogleId } });
-
-      if (!user) {
-        // Jika belum, buat user baru
-        user = await User.create({
-          name,
-          email,
-          GoogleId,
-          password: null, // Google login tidak memerlukan password
-        });
-      } else {
-        // Update data jika sudah ada
-        user = await user.update({ name, email });
-      }
-
-      // Generate JWT token
-      const token = generateToken({ id: user.id, email: user.email });
-
-      return res.status(200).json({
-        success: true,
-        message: "Google login berhasil",
-        data: {
-          user: {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-          },
-          token,
-        },
-      });
-    } catch (err) {
-      next(err);
-    }
-  }
-
-  /**
    * @route POST /auth/register
    * @desc Register user baru dengan email & password
    * @access Public
@@ -68,13 +17,15 @@ class AuthController {
 
       // Validasi input
       if (!name || !email || !password || !passwordConfirm) {
-        const error = new Error("Semua field harus diisi");
+        const error = new Error("All fields must be filled.");
         error.status = 400;
         throw error;
       }
 
       if (password !== passwordConfirm) {
-        const error = new Error("Password dan konfirmasi password tidak sesuai");
+        const error = new Error(
+          "Password and confirmation password do not match"
+        );
         error.status = 400;
         throw error;
       }
@@ -82,7 +33,7 @@ class AuthController {
       // Cek apakah email sudah terdaftar
       const existingUser = await User.findOne({ where: { email } });
       if (existingUser) {
-        const error = new Error("Email sudah terdaftar");
+        const error = new Error("Email is already registered");
         error.status = 400;
         throw error;
       }
@@ -103,7 +54,7 @@ class AuthController {
 
       return res.status(201).json({
         success: true,
-        message: "Registrasi berhasil",
+        message: "Registration successful",
         data: {
           user: {
             id: user.id,
@@ -129,7 +80,7 @@ class AuthController {
 
       // Validasi input
       if (!email || !password) {
-        const error = new Error("Email dan password diperlukan");
+        const error = new Error("Email and password are required");
         error.status = 400;
         throw error;
       }
@@ -138,7 +89,7 @@ class AuthController {
       const user = await User.findOne({ where: { email } });
 
       if (!user || !user.password) {
-        const error = new Error("Email atau password salah");
+        const error = new Error("Email or password is incorrect");
         error.status = 401;
         throw error;
       }
@@ -147,7 +98,7 @@ class AuthController {
       const isPasswordValid = await comparePassword(password, user.password);
 
       if (!isPasswordValid) {
-        const error = new Error("Email atau password salah");
+        const error = new Error("Email or password is incorrect");
         error.status = 401;
         throw error;
       }
@@ -157,7 +108,7 @@ class AuthController {
 
       return res.status(200).json({
         success: true,
-        message: "Login berhasil",
+        message: "Login successful",
         data: {
           user: {
             id: user.id,
@@ -179,10 +130,9 @@ class AuthController {
    */
   static async getProfile(req, res, next) {
     try {
-      // req.user harus di-set oleh middleware authentication
       if (!req.user) {
         const error = new Error(
-          "Token tidak valid atau user tidak terautentikasi"
+          "Token is invalid or user is not authenticated"
         );
         error.status = 401;
         throw error;
@@ -191,14 +141,14 @@ class AuthController {
       const user = await User.findByPk(req.user.id);
 
       if (!user) {
-        const error = new Error("User tidak ditemukan");
+        const error = new Error("User not found");
         error.status = 404;
         throw error;
       }
 
       return res.status(200).json({
         success: true,
-        message: "Profil user berhasil diambil",
+        message: "User profile retrieved successfully",
         data: {
           user: {
             id: user.id,
@@ -214,14 +164,14 @@ class AuthController {
 
   /**
    * @route POST /auth/logout
-   * @desc Logout user (hapus session/token dari client)
+   * @desc Logout user (remove session/token from client)
    * @access Private (requires token)
    */
   static async logout(req, res, next) {
     try {
       return res.status(200).json({
         success: true,
-        message: "Logout berhasil. Silakan hapus token dari client.",
+        message: "Logout successful. Please remove the token from the client.",
       });
     } catch (err) {
       next(err);
