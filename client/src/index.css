@@ -1,0 +1,269 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background-color: #121212;
+  color: #fff;
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #1e1e1e;
+  padding: 10px 30px;
+  box-shadow: 0 2px 8px rgba(0, 173, 181, 0.2);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.title {
+  font-size: 1.5rem;
+  color: #00adb5;
+  font-weight: 600;
+}
+
+.login-btn, .logout-btn {
+  background-color: #00adb5;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.login-btn:hover, .logout-btn:hover {
+  background-color: #03c4ce;
+}
+
+/* ===== Search Section ===== */
+.search-section {
+  max-width: 1100px;
+  margin: 10px auto 30px;
+  padding: 0 20px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.search-section input,
+.search-section select {
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background-color: #1e1e1e;
+  color: #fff;
+  outline: none;
+  font-size: 1rem;
+}
+
+.search-section input {
+  flex: 1;
+  min-width: 220px;
+}
+
+.search-section select {
+  width: 180px;
+}
+
+.search-btn {
+  background-color: #00adb5;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.search-btn:hover {
+  background-color: #03c4ce;
+}
+
+/* Section Titles */
+.section-title {
+  font-size: 1.4rem;
+  margin-bottom: 16px;
+  color: #00adb5;
+  border-left: 4px solid #00adb5;
+  padding-left: 10px;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 20px;
+  background-color: #1e1e1e;
+  color: #aaa;
+  font-size: 0.85rem;
+  margin-top: 40px;
+}
+
+/* ===== AI & Game List ===== */
+.ai-section, .game-section {
+  margin: 30px auto;
+  padding: 0 20px;
+  max-width: 1100px;
+}
+
+.ai-cards {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+}
+
+.ai-card {
+  min-width: 200px;
+  background-color: #1e1e1e;
+  border-radius: 10px;
+  text-align: center;
+  padding: 10px;
+  transition: transform 0.3s;
+}
+
+.ai-card img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.ai-card:hover {
+  transform: scale(1.05);
+}
+
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.game-card {
+  background-color: #1e1e1e;
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
+  transition: transform 0.3s;
+}
+
+.game-card img {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.game-card:hover {
+  transform: scale(1.03);
+}
+
+.fav-btn {
+  margin-top: 10px;
+  background-color: transparent;
+  border: 1px solid #00adb5;
+  color: #00adb5;
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.fav-btn:hover {
+  background-color: #00adb5;
+  color: #fff;
+}
+
+/* ===== Auth Pages (Login & Register) ===== */
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 100px);
+}
+
+.auth-box {
+  background-color: #1e1e1e;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0, 173, 181, 0.3);
+  width: 350px;
+  text-align: center;
+}
+
+.auth-box h2 {
+  color: #00adb5;
+  margin-bottom: 20px;
+}
+
+.auth-box input {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 8px;
+  outline: none;
+  background-color: #2a2a2a;
+  color: #fff;
+}
+
+.auth-box button {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  border: none;
+  background-color: #00adb5;
+  color: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.auth-box button:hover {
+  background-color: #03c4ce;
+}
+
+.auth-box a {
+  color: #00adb5;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.auth-box a:hover {
+  text-decoration: underline;
+}
+
+/* ===== Favorites Page ===== */
+.favorites-container {
+  max-width: 1100px;
+  margin: 30px auto;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.empty-fav {
+  text-align: center;
+  margin-top: 60px;
+  color: #aaa;
+  font-size: 1.1rem;
+}
+

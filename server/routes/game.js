@@ -4,7 +4,7 @@ const GameController = require("../controllers/gameController");
 const { asyncHandler } = require("../middleware/errorHandler");
 
 // GET search games (harus sebelum :id route untuk menghindari conflict)
-router.get("/search", asyncHandler(GameController.searchGames));
+// router.get("/search", asyncHandler(GameController.searchGames));
 
 // GET all games (tanpa pagination - untuk infinite scroll)
 router.get("/", asyncHandler(GameController.getAllGames));
