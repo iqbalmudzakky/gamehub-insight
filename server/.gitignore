@@ -2,3 +2,5 @@ node_modules
 .env
 .DS_Store
 testGemini.js
+TESTING_PROMPT.md
+coverage/

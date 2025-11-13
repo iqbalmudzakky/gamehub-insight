@@ -8,11 +8,11 @@ class FavoriteController {
    */
   static async getUserFavorites(req, res, next) {
     try {
-      if (!req.user) {
-        const error = new Error("User not authenticated.");
-        error.status = 401;
-        throw error;
-      }
+      // if (!req.user) {
+      //   const error = new Error("User not authenticated.");
+      //   error.status = 401;
+      //   throw error;
+      // }
 
       const favorites = await Favorite.findAll({
         where: { UserId: req.user.id },
@@ -49,11 +49,11 @@ class FavoriteController {
    */
   static async addFavorite(req, res, next) {
     try {
-      if (!req.user) {
-        const error = new Error("User not authenticated.");
-        error.status = 401;
-        throw error;
-      }
+      // if (!req.user) {
+      //   const error = new Error("User not authenticated.");
+      //   error.status = 401;
+      //   throw error;
+      // }
 
       const { gameId } = req.params;
 
@@ -99,11 +99,11 @@ class FavoriteController {
    */
   static async removeFavorite(req, res, next) {
     try {
-      if (!req.user) {
-        const error = new Error("User not authenticated.");
-        error.status = 401;
-        throw error;
-      }
+      // if (!req.user) {
+      //   const error = new Error("User not authenticated.");
+      //   error.status = 401;
+      //   throw error;
+      // }
 
       const { gameId } = req.params;
 

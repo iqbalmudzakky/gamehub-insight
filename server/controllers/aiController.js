@@ -124,11 +124,11 @@ class AiController {
    */
   static async recommendGame(req, res, next) {
     try {
-      if (!req.user) {
-        const error = new Error("User is not authenticated");
-        error.status = 401;
-        throw error;
-      }
+      // if (!req.user) {
+      //   const error = new Error("User is not authenticated");
+      //   error.status = 401;
+      //   throw error;
+      // }
 
       try {
         const result = await AiController._generateRecommendation(req.user.id);
@@ -165,11 +165,11 @@ class AiController {
    */
   static async getAiHistory(req, res, next) {
     try {
-      if (!req.user) {
-        const error = new Error("User is not authenticated");
-        error.status = 401;
-        throw error;
-      }
+      // if (!req.user) {
+      //   const error = new Error("User is not authenticated");
+      //   error.status = 401;
+      //   throw error;
+      // }
 
       // Check for existing history
       const history = await AiRequest.findOne({
@@ -258,11 +258,11 @@ class AiController {
    */
   static async deleteAiRequest(req, res, next) {
     try {
-      if (!req.user) {
-        const error = new Error("User is not authenticated");
-        error.status = 401;
-        throw error;
-      }
+      // if (!req.user) {
+      //   const error = new Error("User is not authenticated");
+      //   error.status = 401;
+      //   throw error;
+      // }
 
       const { id } = req.params;
 
