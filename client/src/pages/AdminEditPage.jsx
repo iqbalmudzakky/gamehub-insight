@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
+import { useDispatch, useSelector } from "react-redux";
 import { serverApi } from "../helpers/client-api";
+import { updateGame } from "../redux/slices/gameSlice";
 
 /**
  * AdminEditPage Component
@@ -11,9 +13,12 @@ export default function AdminEditPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   
+  // Redux hooks
+  const dispatch = useDispatch();
+  const { loading: saving } = useSelector((state) => state.games);
+  
   const [game, setGame] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   
   // Form data
   const [formData, setFormData] = useState({
@@ -108,22 +113,24 @@ export default function AdminEditPage() {
   };
 
   /**
-   * Handle form submission
+   * Handle form submission using Redux
+   * Dispatches the updateGame thunk and handles the result
    */
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setSaving(true);
 
     try {
-      const response = await serverApi.put(`/games/${id}`, formData, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
+      // Dispatch the Redux thunk
+      // unwrap() extracts the payload or throws an error
+      const result = await dispatch(
+        updateGame({ gameId: id, gameData: formData })
+      ).unwrap();
 
-      // Success
+      // Success! Show success message
       await Swal.fire({
         icon: "success",
         title: "Success!",
-        text: response.data.message || "Game updated successfully!",
+        text: result.message || "Game updated successfully!",
         confirmButtonColor: "#3085d6",
         timer: 1500,
       });
@@ -131,17 +138,16 @@ export default function AdminEditPage() {
       // Redirect to admin home
       navigate("/admin");
     } catch (err) {
+      // Error is already in Redux state, extract from err.message
       console.error("🚀 ~ handleSubmit ~ err:", err);
-      
+
       // Show backend error message
       Swal.fire({
         icon: "error",
         title: "Update Failed",
-        text: err.response?.data?.message || "Failed to update game. Please try again.",
+        text: err.message || "Failed to update game. Please try again.",
         confirmButtonColor: "#d33",
       });
-    } finally {
-      setSaving(false);
     }
   };
 
