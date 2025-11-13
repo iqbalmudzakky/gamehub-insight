@@ -80,6 +80,67 @@ class GameController {
       next(err);
     }
   }
+
+  static async editGameById(req, res, next) {
+    try {
+      // Validate admin user
+      const userId = req.user.id;
+      let user = await User.findByPk(userId);
+      if (!user) {
+        const error = new Error("User not found.");
+        error.status = 404;
+        throw error;
+      }
+      if (user.role !== "admin") {
+        const error = new Error("User not authorized.");
+        error.status = 403;
+        throw error;
+      }
+
+      // Validate input data
+      const { title, genre, platform, publisher, thumbnail, createdAt } =
+        req.body;
+      if (
+        !title ||
+        !genre ||
+        !platform ||
+        !publisher ||
+        !thumbnail ||
+        !createdAt
+      ) {
+        const error = new Error("All fields are required.");
+        error.status = 400;
+        throw error;
+      }
+
+      // Find game by ID
+      const { id } = req.params;
+      const game = await Game.findByPk(id);
+      if (!game) {
+        const error = new Error("Game not found.");
+        error.status = 404;
+        throw error;
+      }
+
+      // Update game details
+      await game.update({
+        title,
+        genre,
+        platform,
+        publisher,
+        thumbnail,
+        createdAt,
+      });
+
+      return res.status(200).json({
+        success: true,
+        message: "Game successfully updated.",
+        data: game,
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 module.exports = GameController;

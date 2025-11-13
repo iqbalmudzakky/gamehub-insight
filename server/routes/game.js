@@ -13,4 +13,7 @@ router.get("/", asyncHandler(GameController.getAllGames));
 // GET detail game by database ID
 router.get("/:id", asyncHandler(GameController.getGameById));
 
+// PUT edit detail game by database ID
+router.put("/:id", asyncHandler(GameController.editGameById));
+
 module.exports = router;
