@@ -5,3 +5,4 @@ testGemini.js
 TESTING_PROMPT.md
 coverage/
 restaurant-app-key.pem
+ecosystem.config.js
