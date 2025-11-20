@@ -1,0 +1,31 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npx nodemon ./bin/www",
+    "test": "jest --silent --verbose --coverage"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@google/genai": "^1.29.0",
+    "axios": "^1.6.8",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^5.1.0",
+    "google-auth-library": "^10.5.0",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.16.3",
+    "sequelize": "^6.37.7"
+  },
+  "devDependencies": {
+    "jest": "^30.2.0",
+    "nodemon": "^3.1.10",
+    "sequelize-cli": "^6.6.3",
+    "supertest": "^7.1.4"
+  }
+}
